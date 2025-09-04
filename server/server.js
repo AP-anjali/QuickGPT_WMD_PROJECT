@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // route
-app.get('/', (req, res) => res.send('server is live..!'));
+app.get('/', (req, res) => res.send('server is live babe..!'));
 app.use('/api/user', userRouter);   // aetle /api/user/register.. aevi rite url banse.
 app.use('/api/chat', chatRouter);
 app.use('/api/message', messageRouter);
