@@ -35,7 +35,7 @@ export const stripeWebhooks = async (request, response) => {
                     const transaction = await Transaction.findOne({_id: transactionId, isPaid: false});
 
                     // update credit into the user account
-                    await User.updateOne({_id: transaction.userId}, {$inc: {credit: transaction.credits}});
+                    await User.updateOne({_id: transaction.userId}, {$inc: {credits: transaction.credits}});
 
                     // update transaction status : "isPaid = false" to "isPaid = true"
                     transaction.isPaid = true;
