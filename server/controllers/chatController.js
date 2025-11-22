@@ -1,3 +1,5 @@
+// /server/controller/chatController.js
+
 import Chat from "../models/Chat.js";
 
 
