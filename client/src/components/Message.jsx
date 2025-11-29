@@ -16,17 +16,17 @@ const Message = ({message}) => {
     <div>
       {message.role === 'user' ? (
         // user side
-        <div className='flex items-start justify-end my-4 gap-2'>
-          <div className='flex flex-col gap-2 p-2 px-4 bg-slate-50 dark:bg-[#57317C]/30 border border-[#80609F]/30 rounded-md max-w-2xl'>
+        <section className='flex items-start justify-end my-4 gap-2'>
+          <article className='flex flex-col gap-2 p-2 px-4 bg-slate-50 dark:bg-[#57317C]/30 border border-[#80609F]/30 rounded-md max-w-2xl'>
             <p className='text-sm dark:text-primary'>{message.content}</p>
             <span className='text-xs text-gray-400 dark:text-[#B1A6C0]'>{moment(message.timestamp).fromNow()}</span>
-          </div>
+          </article>
           <img src={assets.user_icon} alt="user_icon" className='w-8 rounded-full' />
-        </div>
+        </section>
       ) : 
       (
         // AI side
-        <div className='inline-flex flex-col gap-2 p-2 px-4 max-w-2xl bg-primary/20 dark:bg-[#57317C]/30 border border-[#80609F]/30 rounded-md my-4'>
+        <section className='inline-flex flex-col gap-2 p-2 px-4 max-w-2xl bg-primary/20 dark:bg-[#57317C]/30 border border-[#80609F]/30 rounded-md my-4'>
           {message.isImage ? (
             <img src={message.content} alt="message.content" className='w-full max-w-md mt-2 rounded-md' />
           ) 
@@ -39,7 +39,7 @@ const Message = ({message}) => {
             </div>
           )}
           <span className='text-xs text-gray-400 dark:text-[#B1A6C0]'>{moment(message.timestamp).fromNow()}</span>
-        </div>
+        </section>
       )
       }
     </div>

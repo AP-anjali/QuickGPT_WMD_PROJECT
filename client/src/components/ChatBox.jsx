@@ -83,15 +83,15 @@ const ChatBox = () => {
   }, [messages]);
 
   return (
-    <div className='flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40'>
+    <main className='flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40'>
       
       {/* chat messages */}
-      <div ref={containerRef} className='flex-1 mb-5 overflow-y-scroll'>
+      <section ref={containerRef} className='flex-1 mb-5 overflow-y-scroll'>
         {messages.length === 0 && (
-          <div className='h-full flex flex-col items-center justify-center gap-2 text-primary'>
+          <article className='h-full flex flex-col items-center justify-center gap-2 text-primary'>
             <img src={theme === 'dark' ? assets.logo_full : assets.logo_full_dark} alt="logo" className='w-full max-w-56 sm:max-w-68' />
             <p className='mt-5 text-4xl sm:text-6xl text-center text-gray-400 dark:text-white'>Ask me anything.</p>
-          </div>
+          </article>
         )}
 
         {messages.map((message, index) => <Message key={index} message={message} />)}
@@ -104,7 +104,7 @@ const ChatBox = () => {
             <div className='w-1.5 h-1.5 rounded-full bg-gray-500 dark:bg-white animate-bounce'></div>
           </div>
         }
-      </div>
+      </section>
 
       {/* AI generated image ne community ma post karvo chhe ke nai, aenu checkbox */}
       {mode === 'image' && (
@@ -128,7 +128,7 @@ const ChatBox = () => {
         </button>
       </form>
 
-    </div>
+    </main>
   )
 }
 
