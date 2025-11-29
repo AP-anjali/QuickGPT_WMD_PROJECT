@@ -1,14 +1,27 @@
 // /server/routes/userRoutes.js
-
 import express from 'express';
-import { registerUser, loginUser, getUser, getPublishedImages } from '../controllers/userController.js';
+import { registerUser, loginUser, getUser, getPublishedImages, getUserById, updateUserCredits } from '../controllers/userController.js';
 import { protect } from '../middlewares/auth.js';
 
-const userRoutes = express.Router();
+const router = express.Router();
 
-userRoutes.post('/register', registerUser);
-userRoutes.post('/login', loginUser);
-userRoutes.get('/data', protect, getUser);
-userRoutes.get('/published-images', getPublishedImages);
+// GET /api/users/published-images
+router.get('/published-images', getPublishedImages);
 
-export default userRoutes;
+// POST /api/users/register
+router.post('/register', registerUser);
+
+// POST /api/users/login
+router.post('/login', loginUser);
+
+// GET /api/users/me
+router.get('/me', protect, getUser);
+
+// GET /api/users/:id
+router.get('/:id', protect, getUserById);
+
+// PATCH /api/users/:id/credits -> update credits (used by admin or webhook)
+router.patch('/:id/credits', protect, updateUserCredits);
+
+
+export default router;

@@ -12,7 +12,8 @@ import Loading from './pages/Loading'
 import { useAppContext } from './context/AppContext'
 import Login from './pages/Login'
 import {Toaster} from 'react-hot-toast';
-import PageNotFound from './pages/PageNotFound'
+import PageNotFound from './pages/PageNotFound';
+import ThirdPartyPage from "./pages/ThirdPartyPage";
 
 const App = () => {
 
@@ -36,6 +37,7 @@ const App = () => {
               <Route path="/" element={<ChatBox />} />
               <Route path="/credits" element={<Credits />} />
               <Route path="/community" element={<Community />} />
+              <Route path="/thirdparty" element={<ThirdPartyPage />} />
               <Route path="*" element={<PageNotFound />} />
             </Routes>
           </div>

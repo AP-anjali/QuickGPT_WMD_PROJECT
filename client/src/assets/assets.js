@@ -1,3 +1,5 @@
+// /client/src/assets
+
 import logo from "./logo.svg";
 import logo_full from "./logo_full.svg";
 import logo_full_dark from "./logo_full_dark.svg";

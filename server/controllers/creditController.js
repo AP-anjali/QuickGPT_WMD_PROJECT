@@ -1,92 +1,83 @@
-// /server/controller/creditController.js
-
-import Transaction from "../models/Transactions.js";
+// /server/controllers/creditController.js
+import Transaction from '../models/Transactions.js';
 import Stripe from 'stripe';
+import User from '../models/User.js';
 
 const plans = [
-    {
-        _id: "basic",
-        name: "Basic",
-        price: 10,
-        credits: 100,
-        features: ['100 text generations', '50 image generations', 'Standard support', 'Access to basic models']
-    },
-    {
-        _id: "pro",
-        name: "Pro",
-        price: 20,
-        credits: 500,
-        features: ['500 text generations', '200 image generations', 'Priority support', 'Access to pro models', 'Faster response time']
-    },
-    {
-        _id: "premium",
-        name: "Premium",
-        price: 30,
-        credits: 1000,
-        features: ['1000 text generations', '500 image generations', '24/7 VIP support', 'Access to premium models', 'Dedicated account manager']
-    }
+  { _id: 'basic', name: 'Basic', price: 10, credits: 100, features: ['100 text', '50 images'] },
+  { _id: 'pro', name: 'Pro', price: 20, credits: 500, features: ['500 text', '200 images'] },
+  { _id: 'premium', name: 'Premium', price: 30, credits: 1000, features: ['1000 text', '500 images'] },
 ];
-
-// API controller for getting all plans
-export const getPlans = async (req, res) => {
-    try {
-        res.status(200).json({success : true, plans});
-    } catch (error) {
-        res.status(500).json({success : false, message : error.message});
-    }
-}
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// API controller for purchasing a plan
-export const purchasePlan = async (req, res) => {
-    try 
-    {
-        const {planId} = req.body;
-        const userId = req.user._id;
-        const plan = plans.find(plan => plan._id === planId);
+// GET /api/credits/plans
+export const getPlans = async (req, res, next) => {
+  try {
+    res.status(200).json({ success: true, plans });
+  } catch (error) {
+    next(error);
+  }
+};
 
-        if(!plan)
+// POST /api/credits/purchase
+export const purchasePlan = async (req, res, next) => {
+  try {
+    const { planId } = req.body;
+    const userId = req.user._id;
+    const plan = plans.find((p) => p._id === planId);
+    if (!plan) return res.status(400).json({ success: false, message: 'Invalid plan' });
+
+    const transaction = await Transaction.create({
+      userId,
+      planId: plan._id,
+      amount: plan.price,
+      credits: plan.credits,
+      isPaid: false,
+    });
+
+    const { origin } = req.headers;
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
         {
-            return res.json({success : false, message : "Invalid Plan"});
-        }
+          price_data: {
+            currency: 'usd',
+            unit_amount: plan.price * 100,
+            product_data: { name: plan.name },
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${origin}/loading`,
+      cancel_url: `${origin}`,
+      metadata: { transactionId: transaction._id.toString(), appId: 'quickgpt' },
+      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+    });
 
-        // create new transaction
-        const transaction = await Transaction.create({
-            userId : userId,
-            planId : plan._id,
-            amount : plan.price,
-            credits : plan.credits,
-            isPaid : false
-        });
+    res.status(200).json({ success: true, url: session.url });
+  } catch (error) {
+    next(error);
+  }
+};
 
-        const {origin} = req.headers;
+export const getTransactions = async (req, res, next) => {
+  try {
+    const transactions = await Transaction.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, transactions });
+  } catch (error) {
+    next(error);
+  }
+};
 
-        const session = await stripe.checkout.sessions.create({
-            line_items: [
-                {
-                    price_data: {
-                        currency: 'usd',    // usd
-                        unit_amount: plan.price * 100,
-                        product_data: {
-                            name: plan.name,
-                        },
-                    },
-                    quantity: 1,
-                },
-            ],
-            mode: 'payment',
-            success_url: `${origin}/loading`,
-            cancel_url: `${origin}`,
-            metadata: {transactionId: transaction._id.toString(), appId: 'quickgpt'},
-            expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // expires 30 minutes from now
-        });
-
-        res.status(200).json({success: true, url: session.url});
-
-    } 
-    catch (error) 
-    {
-        res.status(500).json({success : false, message : error.message});
-    }
-}
+export const updateTransaction = async (req, res, next) => {
+  try {
+    const tx = await Transaction.findOne({ _id: req.params.id, userId: req.user._id });
+    if (!tx) return res.status(404).json({ success: false, message: 'Transaction not found' });
+    tx.isPaid = req.body.isPaid ?? tx.isPaid;
+    await tx.save();
+    res.status(200).json({ success: true, transaction: tx });
+  } catch (error) {
+    next(error);
+  }
+};

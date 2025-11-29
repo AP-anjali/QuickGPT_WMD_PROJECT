@@ -109,6 +109,23 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
       </div>
 
+      {/* third party api button */}
+      <div 
+        onClick={() => { navigate('/thirdparty'); setIsMenuOpen(false);} } 
+        className='flex items-center gap-2 p-3 mt-4 border border-gray-300 dark:border-white/15 
+                  rounded-md cursor-pointer hover:scale-103 transition-all'
+      >
+        <img src={assets.api_icon || assets.gallery_icon} 
+            alt="api_icon" 
+            className='w-4.5 not-dark:invert'/>
+
+        <div className='flex flex-col text-sm'>
+          <p>Third Party API</p>
+          <p className='text-xs text-gray-400'>Daily Joke API</p>
+        </div>
+      </div>
+
+
       {/* credit purchases option */}
       <div onClick={ () => {navigate('/credits'); setIsMenuOpen(false);} } className='flex items-center gap-2 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:scale-103 transition-all'>
         <img src={assets.diamond_icon} alt="gallery_icon" className='w-4.5 dark:invert'/>

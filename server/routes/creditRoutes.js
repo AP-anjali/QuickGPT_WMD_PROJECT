@@ -1,12 +1,13 @@
 // /server/routes/creditRoutes.js
+import express from 'express';
+import { getPlans, purchasePlan, getTransactions, updateTransaction } from '../controllers/creditController.js';
+import { protect } from '../middlewares/auth.js';
 
-import express from "express";
-import { getPlans, purchasePlan } from "../controllers/creditController.js";
-import {protect} from '../middlewares/auth.js';
+const router = express.Router();
 
-const creditRouter = express.Router();
+router.get('/plans', getPlans);             // public
+router.post('/purchase', protect, purchasePlan); // create stripe session (POST)
+router.get('/transactions', protect, getTransactions); // GET user's transactions
+router.patch('/transactions/:id', protect, updateTransaction); // PATCH transaction (webhook/manual)
 
-creditRouter.get('/plan', getPlans);
-creditRouter.post('/purchase', protect, purchasePlan);
-
-export default creditRouter;
+export default router;

@@ -1,60 +1,71 @@
-// /server/controller/chatController.js
+// /server/controllers/chatController.js
+import Chat from '../models/Chat.js';
 
-import Chat from "../models/Chat.js";
+// POST /api/chats
+export const createChat = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const newChat = await Chat.create({
+      userId,
+      messages: [],
+      name: 'New Chat',
+      userName: req.user.name,
+    });
+    res.status(201).json({ success: true, chat: newChat });
+  } catch (error) {
+    next(error);
+  }
+};
 
+// GET /api/chats
+export const getChats = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const chats = await Chat.find({ userId }).sort({ updatedAt: -1 });
+    res.status(200).json({ success: true, chats });
+  } catch (error) {
+    next(error);
+  }
+};
 
-// API controller for creating a new chat
-export const createChat = async (req, res) => {
-    try 
-    {
-        const userId = req.user._id;
-
-        const chatData = {
-            userId,
-            messages : [],
-            name : "New Chat",
-            userName : req.user.name
-        };
-
-        const newChat = await Chat.create(chatData);
-        res.status(201).json({success : true, message : "Chat created successfully", chat: newChat});
-    } 
-    catch (error) 
-    {
-        res.status(500).json({success : false, message : error.message});
+// GET /api/chats/:id
+export const getChatById = async (req, res, next) => {
+  try {
+    const chat = await Chat.findOne({ _id: req.params.id, userId: req.user._id });
+    if (!chat) {
+      return res.status(404).json({ success: false, message: 'Chat not found' });
     }
-}
+    res.status(200).json({ success: true, chat });
+  } catch (error) {
+    next(error);
+  }
+};
 
-// API controller for getting all chats
-export const getChats = async (req, res) => {
-    try 
-    {
-        const userId = req.user._id;
+// PUT /api/chats/:id
+export const updateChat = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const chat = await Chat.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user._id },
+      { $set: { name } },
+      { new: true }
+    );
+    if (!chat) return res.status(404).json({ success: false, message: 'Chat not found' });
+    res.status(200).json({ success: true, chat });
+  } catch (error) {
+    next(error);
+  }
+};
 
-        const chats = await Chat.find({userId}).sort({updatedAt : -1});
-
-        res.status(200).json({success : true, chats});
-    } 
-    catch (error) 
-    {
-        res.status(500).json({success : false, message : error.message});
+// DELETE /api/chats/:id
+export const deleteChat = async (req, res, next) => {
+  try {
+    const result = await Chat.deleteOne({ _id: req.params.id, userId: req.user._id });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ success: false, message: 'Chat not found or already deleted' });
     }
-}
-
-// API controller for delete chat
-export const deleteChat = async (req, res) => {
-    try 
-    {
-        const userId = req.user._id;
-
-        const {chatId} = req.body;
-
-        await Chat.deleteOne({ _id : chatId, userId});
-
-        res.status(200).json({success : true, message : "Chat deleted"});
-    } 
-    catch (error) 
-    {
-        res.status(500).json({success : false, message : error.message});
-    }
-}
+    res.status(200).json({ success: true, message: 'Chat deleted' });
+  } catch (error) {
+    next(error);
+  }
+};

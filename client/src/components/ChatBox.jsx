@@ -32,7 +32,7 @@ const ChatBox = () => {
       setPrompt("");
       setMessages(prev => [...prev, {role : 'user', content: prompt, timestamp: Date.now(), isImage: false}]);
 
-      const {data} = await axios.post(`api/message/${mode}`, {chatId: selectedChats._id, prompt, isPublished}, {headers: {Authorization: token}});
+      const {data} = await axios.post(`api/messages/${mode}`, {chatId: selectedChats._id, prompt, isPublished}, {headers: {Authorization: token}});
 
       if(data.success)
       {
