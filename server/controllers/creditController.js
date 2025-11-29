@@ -20,6 +20,22 @@ export const getPlans = async (req, res, next) => {
   }
 };
 
+// add near top of file (with other exports)
+export const getMyCredits = async (req, res, next) => {
+  try {
+    // req.user is set by `protect` middleware
+    const userId = req.user?._id;
+    if (!userId) return res.status(401).json({ success: false, message: 'Not authorized' });
+
+    const user = await User.findById(userId).select('credits name email');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    return res.status(200).json({ success: true, credits: user.credits, user: { _id: user._id, name: user.name, email: user.email } });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // POST /api/credits/purchase
 export const purchasePlan = async (req, res, next) => {
   try {
@@ -36,7 +52,9 @@ export const purchasePlan = async (req, res, next) => {
       isPaid: false,
     });
 
-    const { origin } = req.headers;
+    // Prefer request origin (browser), else fallback to env
+    const origin = req.headers.origin || process.env.FRONTEND_URL;
+
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {

@@ -16,6 +16,7 @@ import logger from './middlewares/logger.js';
 import { errorHandler, notFound } from './middlewares/errorHandler.js';
 
 const app = express();
+app.use(express.json());
 
 // connect db
 await connectDB();
@@ -25,7 +26,6 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), strip
 
 // middleware
 app.use(cors());
-app.use(express.json());
 app.use(morgan('dev'));        // dev logging
 app.use(logger);               // custom logger
 
