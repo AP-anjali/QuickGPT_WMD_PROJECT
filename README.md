@@ -55,4 +55,5 @@ QuickGPT is a MERN stack based AI chatbot application inspired by ChatGPT. It en
 - `GET https://official-joke-api.appspot.com/jokes/random` : get a random joke  
 
 ## Notes
+- server side code is hosted on `https://quick-gpt-server-plum.vercel.app/`
 - EJS pages at `/` and `/pricing` on server side...
