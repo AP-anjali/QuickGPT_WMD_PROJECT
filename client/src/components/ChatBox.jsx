@@ -38,7 +38,7 @@ const ChatBox = () => {
       {
         setMessages(prev => [...prev, data.reply]);
 
-        // decrease credits
+        // decreasing credits
         if(mode === 'image')
         {
           setUser(prev => ({...prev, credits: prev.credits - 2}));
@@ -90,7 +90,7 @@ const ChatBox = () => {
         {messages.length === 0 && (
           <article className='h-full flex flex-col items-center justify-center gap-2 text-primary'>
             <img src={theme === 'dark' ? assets.logo_full : assets.logo_full_dark} alt="logo" className='w-full max-w-56 sm:max-w-68' />
-            <p className='mt-5 text-4xl sm:text-6xl text-center text-gray-400 dark:text-white'>Ask me anything.</p>
+            <p className='mt-5 text-4xl sm:text-6xl text-center text-gray-400 dark:text-white'>Ask me anything..</p>
           </article>
         )}
 

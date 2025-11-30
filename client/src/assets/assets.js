@@ -55,7 +55,6 @@ export const dummyUserData = {
     "credits": 200,
 }
 
-// copy for server controllers
 export const dummyPlans = [
     {
         _id: "basic",

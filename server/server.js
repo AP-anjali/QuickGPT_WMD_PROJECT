@@ -1,4 +1,5 @@
 // /server/server.js
+
 import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
@@ -18,16 +19,16 @@ import { errorHandler, notFound } from './middlewares/errorHandler.js';
 const app = express();
 app.use(express.json());
 
-// connect db
+// connect to db
 await connectDB();
 
-// stripe webhooks endpoint (raw body)
+// stripe webhooks endpoint - raw body
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhooks);
 
-// middleware
+// middlewares
 app.use(cors());
-app.use(morgan('dev'));        // dev logging
-app.use(logger);               // custom logger
+app.use(morgan('dev'));        
+app.use(logger);  // custom logger
 
 // EJS view engine for server-side rendering demo
 app.set('view engine', 'ejs');
@@ -78,5 +79,5 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`server running on port ${PORT}`);
 });

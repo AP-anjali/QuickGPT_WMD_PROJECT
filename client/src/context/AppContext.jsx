@@ -12,7 +12,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token"); 
 
-  if (token) {
+  if (token)
+  {
     config.headers.Authorization = token;
   }
 
@@ -24,11 +25,13 @@ const AppContext = createContext();
 const fetchWrapper = async (url, { method = 'GET', body = null, token = null } = {}) => {
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = token;
+
   const res = await fetch(import.meta.env.VITE_SERVER_URL + url, {
     method,
     headers,
     body: body ? JSON.stringify(body) : null,
   });
+
   const data = await res.json().catch(() => ({}));
   return { status: res.status, data };
 };
@@ -43,11 +46,21 @@ export const AppContextProvider = ({ children }) => {
   const [loadingUser, setLoadingUser] = useState(true);
 
   const fetchUser = async () => {
-    if (!token) { setLoadingUser(false); return; }
+
+    if (!token) 
+    { 
+      setLoadingUser(false); 
+      return; 
+    }
+
     const { status, data } = await fetchWrapper('/api/users/me', { token });
-    if (status === 200 && data.success) {
+
+    if (status === 200 && data.success)
+    {
       setUser(data.user);
-    } else {
+    } 
+    else 
+    {
       toast.error(data.message || 'Failed to fetch user');
       setUser(null);
       setToken(null);
@@ -57,29 +70,45 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const createNewChat = async () => {
+
     if (!user) return toast('Login to create a new chat !');
+
     const { status, data } = await fetchWrapper('/api/chats', { method: 'POST', token });
-    if (status === 201 && data.success) {
+
+    if (status === 201 && data.success)
+    {
       setChats(prev => [data.chat, ...prev]);
       setSelectedChats(data.chat);
       navigate('/');
-    } else {
+    } 
+    else 
+    {
       toast.error(data.message || 'Failed to create chat');
     }
   };
 
   const fetchUserChats = async () => {
+
     if (!token) return;
+
     const { status, data } = await fetchWrapper('/api/chats', { token });
-    if (status === 200 && data.success) {
+
+    if (status === 200 && data.success) 
+    {
       const safeChats = Array.isArray(data.chats) ? data.chats : [];
       setChats(safeChats);
-      if (safeChats.length === 0) {
+
+      if (safeChats.length === 0) 
+      {
         await createNewChat();
-      } else {
+      } 
+      else 
+      {
         setSelectedChats(safeChats[0]);
       }
-    } else {
+    } 
+    else 
+    {
       toast.error(data.message || 'Failed to fetch chats');
     }
   };
@@ -87,6 +116,7 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     if (theme === 'dark') document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
+    
     localStorage.setItem('theme', theme);
   }, [theme]);
 

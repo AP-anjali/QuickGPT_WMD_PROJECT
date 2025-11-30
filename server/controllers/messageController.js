@@ -1,15 +1,18 @@
 // /server/controllers/messageController.js
+
 import Chat from '../models/Chat.js';
 import User from '../models/User.js';
 import axios from 'axios';
 import imageKit from '../configs/imageKit.js';
 import openai from '../configs/openai.js';
 
-// TEXT
+// TEXT message generation
 export const textMessageController = async (req, res, next) => {
-  try {
+  try 
+  {
     const userId = req.user._id;
     const { chatId, prompt } = req.body;
+
     if (!prompt || !chatId) return res.status(400).json({ success: false, message: 'chatId and prompt required' });
 
     const chat = await Chat.findOne({ userId, _id: chatId });
@@ -17,7 +20,7 @@ export const textMessageController = async (req, res, next) => {
 
     chat.messages.push({ role: 'user', content: prompt, timestamp: Date.now(), isImage: false });
 
-    // call OpenAI / Gemini
+    // call to Gemini API
     const { choices } = await openai.chat.completions.create({
       model: 'gemini-2.0-flash',
       messages: [{ role: 'user', content: prompt }],
@@ -28,18 +31,21 @@ export const textMessageController = async (req, res, next) => {
     chat.messages.push(reply);
     await chat.save();
 
-    // decrement credit
+    // decrement of credit
     await User.updateOne({ _id: userId }, { $inc: { credits: -1 } });
 
     res.status(200).json({ success: true, reply });
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     next(error);
   }
 };
 
-// IMAGE
+// IMAGE message generation
 export const imageMessageController = async (req, res, next) => {
-  try {
+  try 
+  {
     const userId = req.user._id;
     const { chatId, prompt, isPublished = false } = req.body;
     if (!prompt || !chatId) return res.status(400).json({ success: false, message: 'chatId and prompt required' });
@@ -49,7 +55,7 @@ export const imageMessageController = async (req, res, next) => {
 
     chat.messages.push({ role: 'user', content: prompt, timestamp: Date.now(), isImage: false });
 
-    // generate via ImageKit AI endpoint (same logic)
+    // generate via ImageKit AI endpoint
     const encodedPrompt = encodeURIComponent(prompt);
     const generatedImageUrl = `${process.env.IMAGEKIT_URL_ENDPOINT}/ik-genimg-prompt-${encodedPrompt}/quickgpt/${Date.now()}.png?tr=w-800,h-800`;
 
@@ -69,7 +75,9 @@ export const imageMessageController = async (req, res, next) => {
     await User.updateOne({ _id: userId }, { $inc: { credits: -2 } });
 
     res.status(200).json({ success: true, reply });
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     next(error);
   }
 };

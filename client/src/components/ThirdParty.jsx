@@ -5,11 +5,14 @@ const ThirdParty = () => {
   const [joke, setJoke] = useState(null);
 
   const fetchJoke = async () => {
-    try {
+    try 
+    {
       const res = await fetch('https://official-joke-api.appspot.com/jokes/random');
       const data = await res.json();
       setJoke(`${data.setup} — ${data.punchline}`);
-    } catch (e) {
+    } 
+    catch (e) 
+    {
       setJoke('Could not fetch joke.');
     }
   };

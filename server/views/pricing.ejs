@@ -4,8 +4,6 @@
     <meta charset="UTF-8" />
     <title><%= title %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
@@ -15,7 +13,7 @@
       
       <h1 class="text-3xl font-bold mb-4">Pricing Plans</h1>
       <p class="text-gray-600 mb-6">
-        These plans are server-side rendered using EJS (Requirement B.13).
+        These plans are server-side rendered using EJS
       </p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -34,7 +32,7 @@
           <ul class="text-left space-y-2 mt-4">
             <% plan.features.forEach(f => { %>
               <li class="text-gray-700 flex items-center gap-2">
-                ✅ <%= f %>
+                <%= f %>
               </li>
             <% }) %>
           </ul>
@@ -48,7 +46,7 @@
         href="/" 
         class="inline-block mt-8 text-blue-600 hover:underline"
       >
-        ⬅ Back to Home
+        Back to Home
       </a>
 
     </div>
